@@ -27,9 +27,6 @@ script button
 	on live(channelnumber)
 		my switcher's liverow("normal", "cam" & channelnumber)
 		my switcher's setTransition("1", "fast")
-		--my switcher's removelower("foreground", "Blank Shot")
-		--my switcher's setTransition("2", "normal")
-		--my switcher's liverow("normal", "theshot")
 	end live
 
 	#This button press will take the channel number and put it into preview
@@ -55,16 +52,6 @@ script button
 	on leftTwist(channelnumber)
 		my switcher's previewrow("normal", "cam" & channelnumber & "-db")
 	end leftTwist
-	
-	#This function does one of 2 things, depending on the workflow that is desired
-	#If it is the original workflow then a fx(graphic) will be brought into live view
-	#If it is the optional workflow, then a lower 3rd for the selected channel will be live
-	on fxold(channelnumber)
-		my switcher's liverow("normal", "cam" & channelnumber)
-		my switcher's setTransition("3", "fast")
-		my switcher's lower("Master Layer 1", "chl3rd-" & channelnumber)
-		my switcher's setTransition("2", "normal")
-	end fx
 
 	on fx(channelnumber)
 		my switcher's setTransition("3", "fast")
@@ -108,47 +95,7 @@ script button
 			my switcher's stopRecord()
 		end if
 	end recordMe
-	
-	#Play The Master DDR
-	on ddr(state)
-		if state is "down" then
-			my switcher's takeddr()
-		end if
-		if state is "up" then
-			my switcher's removeddr()
-		end if
-	end ddr
-	t
-	#Stop DDR
-	on StopDDRPlayer()
-		my switcher's removeddr()
-	end StopDDRPlayer
 
-	#This is the play DDR for the nanoPad.  the ddrnum is the number of the ddr to play
-	on DDRPlayer(ddrnum)
-		my switcher's playddr("ddr" & ddrnum)
-	end DDRPlayer
-
-	#Play intro video, consider using DDR with nanoPad, it is more reliable
-	on intro(state)
-		if state is "down" then
-			my switcher's takeintro()
-		end if
-		if state is "up" then
-			my switcher's removeintro()
-		end if
-	end intro
-	
-	#Play outro video, consider using DDR with nanoPad, it is more reliable
-	on outro(state)
-		if state is "down" then
-			my switcher's takeoutro()
-		end if
-		if state is "up" then
-			my switcher's removeoutro()
-		end if
-	end outro
-	
 end script
 
 
@@ -191,6 +138,7 @@ script switcher
 
 	#This function tells wirecast what type of transition is used for auto and the speed of the transition
 	on setTransition(anumber, speed)
+		setup()
 		tell application "Wirecast"
 			set my myDoc's active transition popup to anumber
 			set my myDoc's transition speed to speed
@@ -201,16 +149,8 @@ script switcher
 	on take()
 		setup()
 		tell application "Wirecast"
-			--set the active shot of the layer named "Foreground" of myDoc to the shot named cgstore of myDoc
 			go myDoc
-			--set the active shot of the layer named "Normal" of myDoc to the shot named program of myDoc
-			
-			--set the active shot of the layer named "Foreground" of myDoc to the shot named "Blank Shot" of myDoc
-		
 			end tell
-		--set buffer to program
-		--set program to preview
-		--set preview to buffer
 	end take
 	
 	#auto will put what is in preview onto live using the transition and speed set
@@ -219,16 +159,8 @@ script switcher
 		tell application "Wirecast"
 			set my myDoc's transition speed to "fast"
 			set my myDoc's active transition popup to 1
-			--set the active shot of the layer named "Foreground" of myDoc to the shot named cgstore of myDoc
 			go myDoc
-			--set the active shot of the layer named "Normal" of myDoc to the shot named program of myDoc
-			--set my myDoc's active transition popup to 2
-			
-			--set the active shot of the layer named "Foreground" of myDoc to the shot named "Blank Shot" of myDoc		
 			end tell
-		--set buffer to program
-		--set program to preview
-		--set preview to buffer
 	end auto
 	
 	#displays the fx
@@ -254,20 +186,6 @@ script switcher
 			go myDoc
 			--set the active shot of the layer named layername of my myDoc to the shot named preview of my myDoc
 			--set the active shot of the layer named "Foreground" of my myDoc to the shot named "Blank Shot" of my myDoc
-		end tell
-		set program to shotname
-	end liverow
-
-	#used to put the lower rd live
-	on liverowl3(layername, shotname)
-		setup()
-		tell application "Wirecast"
-			set the active shot of the layer named layername of my myDoc to the shot named shotname of my myDoc
-			set program to the shot named shotname of my myDoc
-			set the active shot of the layer named "Foreground" of my myDoc to the shot named cgstore of my myDoc
-			go myDoc
-			set the active shot of the layer named layername of my myDoc to the shot named preview of my myDoc
-			set the active shot of the layer named "Foreground" of my myDoc to the shot named "Blank Shot" of my myDoc
 		end tell
 		set program to shotname
 	end liverow
@@ -313,95 +231,13 @@ script switcher
 			stop recording myDoc
 		end tell
 	end stopRecord
-	
-	on takeddr()
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "ddr" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "Blank Shot" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell
-	end takeddr
-
-	on playddr(ddrname)
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named ddrname of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "Blank Shot" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell
-	end playddr
-	
-	on removeddr()
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "audio" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell	
-	end removeddr
-	
-	on takeintro()
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "intro" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "Blank Shot" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell
-	end takeintro
-	
-	on removeintro()
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "audio" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell	
-	end removeintro
-	
-	on takeoutro()
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "outro" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "Blank Shot" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell
-	end takeoutro
-	
-	on removeoutro()
-		tell application "Wirecast"
-		set the active shot of the layer named "Master Layer 1" of my myDoc to the shot named "Blank Shot" of my myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-		set the active shot of the layer named "Audio" of my myDoc to the shot named "audio" of my myDoc
-		go myDoc
-		set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-		end tell	
-	end removeoutro
-	
-	
 
 	#activate a lower 3rd
 	on lower(layername, shotname)
 		setup()
 		tell application "Wirecast"
 			set the active shot of the layer named layername of my myDoc to the shot named shotname of my myDoc
-			--set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-			--go myDoc
-			--set the active shot of the layer named layername of my myDoc to the shot named "Blank Shot" of my myDoc
-			--set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-			set cgstore to the shot named shotname of my myDoc
 		end tell
-		set cgstore to shotname
 	end lower
 	
 
@@ -410,12 +246,7 @@ script switcher
 		setup()
 		tell application "Wirecast"
 			set the active shot of the layer named layername of my myDoc to the shot named "Clear Layer" of my myDoc
-			--set the active shot of the layer named "Normal" of my myDoc to the shot named program of my myDoc
-			--go myDoc
-			--set the active shot of the layer named "Normal" of my myDoc to the shot named preview of my myDoc
-			set cgstore to the shot named "Blank Shot" of my myDoc
 		end tell
-		set cgstore to "Blank Shot"
 	end removelower
 	
 	
@@ -446,59 +277,25 @@ on runme(message)
 		my button's recordMe("up")
 	end if
 	
-	if (item 1 of message = 176) and (item 2 of message = 6) and (item 3 of message = 0) then
-		my button's DDR("up")
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 6) and (item 3 of message = 127) then
-		my button's DDR("down")
-	end if
-	
-	if (item 1 of message = 176) and (item 2 of message = 7) and (item 3 of message = 0) then
-		my button's intro("up")
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 7) and (item 3 of message = 127) then
-		my button's intro("down")
-	end if
-	
-	if (item 1 of message = 176) and (item 2 of message = 8) and (item 3 of message = 0) then
-		my button's outro("up")
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 8) and (item 3 of message = 127) then
-		my button's outro("down")
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 102) and (item 3 of message = 127) then
-		my button's fastForward("down")
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 103) and (item 3 of message = 127) then
-		my button's loop("down")
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 3) and (item 3 of message = 127) then
-		my button's stopMe()
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 104) and (item 3 of message = 127) then
-		my button's rewind("down")
-	end if
 	
 	-----------------------------------------
 	-- Channel 1 block
 	-----------------------------------------
 	
+	-- Show slides
+	if (item 1 of message = 176) and (item 2 of message = 15) and (item 3 of message > 0) then
+		do shell script "open -a Keynote"
+	end if
+
+	-- Main camera should hide lower third
 	if (item 1 of message = 176) and (item 2 of message = 11) and (item 3 of message > 0) then
-		-- do stuff for top button
 		my button's downSlide("1")
 		my button's live("1")
 
 	end if
 
+	-- Main camera should hide lower third
 	if (item 1 of message = 176) and (item 2 of message = 12) and (item 3 of message > 0) then
-		-- do stuff for bottom button
 		my button's downSlide("1")
 		my button's preview("1")
 	end if
@@ -542,18 +339,16 @@ on runme(message)
 	-- Channel 2 block
 	-----------------------------------------
 	
+	-- Activate Keynote immediate and add lower third
 	if (item 1 of message = 176) and (item 2 of message = 21) and (item 3 of message > 0) then
-
-		-- do stuff for top button
-		my button's live("2")
-
+		my button's upSlide("2")
+		my button's preview("2")
+		my button's auto()
 	end if
 
 	if (item 1 of message = 176) and (item 2 of message = 22) and (item 3 of message > 0) then
-
-		-- do stuff for bottom button
 		my button's preview("2")
-
+		--my button's keynote()
 	end if
 
 	if (item 1 of message = 176) and (item 2 of message = 23) and (item 3 of message = 0) then
@@ -918,73 +713,5 @@ on runme(message)
 		
 	end if
 
-
-	-----------------------------------------
-	-- ddr controls
-	-----------------------------------------
-
-	if (item 1 of message = 176) and (item 2 of message = 106) and (item 3 of message = 127) then
-		my button's StopDDRPlayer()
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 91) and (item 3 of message = 127) then
-		my button's DDRPlayer(1)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 92) and (item 3 of message = 127) then
-		my button's DDRPlayer(2)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 93) and (item 3 of message = 127) then
-		my button's DDRPlayer(3)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 94) and (item 3 of message = 127) then
-		my button's DDRPlayer(4)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 95) and (item 3 of message = 127) then
-		my button's DDRPlayer(5)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 96) and (item 3 of message = 127) then
-		my button's DDRPlayer(6)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 97) and (item 3 of message = 127) then
-		my button's DDRPlayer(7)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 98) and (item 3 of message = 127) then
-		my button's DDRPlayer(8)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 99) and (item 3 of message = 127) then
-		my button's DDRPlayer(9)
-	end if
-	
-	if (item 1 of message = 176) and (item 2 of message = 100) and (item 3 of message = 127) then
-		my button's DDRPlayer(10)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 101) and (item 3 of message = 127) then
-		my button's DDRPlayer(11)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 102) and (item 3 of message = 127) then
-		my button's DDRPlayer(12)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 103) and (item 3 of message = 127) then
-		my button's DDRPlayer(13)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 104) and (item 3 of message = 127) then
-		my button's DDRPlayer(14)
-	end if
-
-	if (item 1 of message = 176) and (item 2 of message = 105) and (item 3 of message = 127) then
-		my button's DDRPlayer(15)
-	end if
 	
 end runme
